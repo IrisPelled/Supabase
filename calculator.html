@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>המחשבון שלי</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
+      background: radial-gradient(ellipse 120% 80% at 30% 20%, #e8cfc9 0%, transparent 50%),
+        radial-gradient(ellipse 100% 60% at 70% 80%, #d4a59a 0%, transparent 45%),
+        linear-gradient(165deg, #c9aeb0 0%, #b89295 35%, #a87d82 70%, #8f6568 100%);
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #4a2c2e;
+      letter-spacing: 0.02em;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+    .calc {
+      width: min(100% - 2rem, 300px);
+      padding: 1.25rem;
+      border-radius: 16px;
+      background: rgba(90, 55, 58, 0.25);
+      box-shadow: 0 12px 40px rgba(60, 35, 38, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(120, 80, 84, 0.3);
+    }
+    .display {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      font-size: 1.75rem;
+      text-align: left;
+      direction: ltr;
+      border-radius: 10px;
+      border: 1px solid rgba(70, 44, 46, 0.35);
+      background: rgba(40, 28, 30, 0.65);
+      color: #f0dedc;
+      font-variant-numeric: tabular-nums;
+    }
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.55rem;
+    }
+    button {
+      padding: 0.85rem 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.06s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      /* טורקיז מיושן */
+      background: linear-gradient(180deg, #6a9d96 0%, #4d7b76 45%, #3d6b65 100%);
+      color: #e8f2f0;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 3px 0 #2a4f4a, 0 5px 12px rgba(20, 50, 45, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    button:hover {
+      filter: brightness(1.06);
+    }
+    button:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #2a4f4a, 0 2px 6px rgba(20, 50, 45, 0.3);
+    }
+    button.op {
+      background: linear-gradient(180deg, #5a8f88 0%, #3d6862 50%, #2f524d 100%);
+    }
+    button.wide {
+      grid-column: span 2;
+    }
+    button.equals {
+      grid-row: span 2;
+    }
+    button.clear {
+      background: linear-gradient(180deg, #5c7270 0%, #425854 100%);
+    }
+  </style>
+</head>
+<body>
+  <h1>המחשבון שלי</h1>
+  <div class="calc">
+    <input class="display" type="text" id="display" readonly value="0" />
+    <div class="keys">
+      <button type="button" class="clear" data-action="clear">C</button>
+      <button type="button" data-action="back">⌫</button>
+      <button type="button" class="op" data-action="op" data-op="/">÷</button>
+      <button type="button" class="op" data-action="op" data-op="*">×</button>
+
+      <button type="button" data-num="7">7</button>
+      <button type="button" data-num="8">8</button>
+      <button type="button" data-num="9">9</button>
+      <button type="button" class="op" data-action="op" data-op="-">−</button>
+
+      <button type="button" data-num="4">4</button>
+      <button type="button" data-num="5">5</button>
+      <button type="button" data-num="6">6</button>
+      <button type="button" class="op" data-action="op" data-op="+">+</button>
+
+      <button type="button" data-num="1">1</button>
+      <button type="button" data-num="2">2</button>
+      <button type="button" data-num="3">3</button>
+      <button type="button" class="op equals" data-action="equals">=</button>
+
+      <button type="button" class="wide" data-num="0">0</button>
+      <button type="button" data-num=".">.</button>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const display = document.getElementById("display");
+      let current = "0";
+      let stored = null;
+      let pendingOp = null;
+      let fresh = true;
+
+      function update() {
+        display.value = current;
+      }
+
+      function appendDigit(d) {
+        if (fresh) {
+          current = d === "." ? "0." : d;
+          fresh = false;
+          update();
+          return;
+        }
+        if (d === "." && current.includes(".")) return;
+        if (current === "0" && d !== ".") current = d;
+        else current += d;
+        update();
+      }
+
+      function applyOp(nextOp) {
+        const n = parseFloat(current);
+        if (stored === null) {
+          stored = n;
+        } else if (pendingOp && !fresh) {
+          if (pendingOp === "+") stored += n;
+          else if (pendingOp === "-") stored -= n;
+          else if (pendingOp === "*") stored *= n;
+          else if (pendingOp === "/")
+            stored = n === 0 ? NaN : stored / n;
+          current = String(
+            Number.isFinite(stored) ? Math.round(stored * 1e10) / 1e10 : stored
+          );
+          update();
+        }
+        pendingOp = nextOp;
+        fresh = true;
+      }
+
+      function equals() {
+        const n = parseFloat(current);
+        if (pendingOp !== null && stored !== null && Number.isFinite(n)) {
+          if (pendingOp === "+") stored += n;
+          else if (pendingOp === "-") stored -= n;
+          else if (pendingOp === "*") stored *= n;
+          else if (pendingOp === "/")
+            stored = n === 0 ? NaN : stored / n;
+          current = String(
+            Number.isFinite(stored) ? Math.round(stored * 1e10) / 1e10 : stored
+          );
+          update();
+        }
+        pendingOp = null;
+        fresh = true;
+      }
+
+      function clearAll() {
+        current = "0";
+        stored = null;
+        pendingOp = null;
+        fresh = true;
+        update();
+      }
+
+      function backspace() {
+        if (fresh) return;
+        if (current.length <= 1) current = "0";
+        else current = current.slice(0, -1);
+        update();
+      }
+
+      document.querySelector(".keys").addEventListener("click", function (e) {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+
+        if (btn.dataset.num != null) {
+          appendDigit(btn.dataset.num);
+          return;
+        }
+        const action = btn.dataset.action;
+        if (action === "op") {
+          applyOp(btn.dataset.op);
+          return;
+        }
+        if (action === "equals") {
+          equals();
+          return;
+        }
+        if (action === "clear") {
+          clearAll();
+          return;
+        }
+        if (action === "back") {
+          backspace();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
