@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>המחשבון שלי</title>
+  <title>my calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
   <style>
     * {
       box-sizing: border-box;
@@ -23,11 +29,13 @@
     }
     h1 {
       margin: 0;
-      font-size: 1.75rem;
+      font-family: "Caveat", cursive;
+      font-size: 3rem;
       font-weight: 700;
       color: #4a2c2e;
       letter-spacing: 0.02em;
       text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+      direction: ltr;
     }
     .calc {
       width: min(100% - 2rem, 300px);
@@ -97,7 +105,7 @@
   </style>
 </head>
 <body>
-  <h1>המחשבון שלי</h1>
+  <h1>my calculator</h1>
   <div class="calc">
     <input class="display" type="text" id="display" readonly value="0" />
     <div class="keys">
