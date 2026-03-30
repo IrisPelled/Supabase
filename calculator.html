@@ -65,22 +65,23 @@
       border-radius: 10px;
       cursor: pointer;
       transition: transform 0.06s ease, box-shadow 0.15s ease, filter 0.15s ease;
-      /* טורקיז מיושן */
-      background: linear-gradient(180deg, #6a9d96 0%, #4d7b76 45%, #3d6b65 100%);
-      color: #e8f2f0;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
-      box-shadow: 0 3px 0 #2a4f4a, 0 5px 12px rgba(20, 50, 45, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      /* חרדל מיושן / זהב ענתיק */
+      background: linear-gradient(180deg, #d8c078 0%, #b8943a 42%, #96751f 100%);
+      color: #2c2210;
+      text-shadow: 0 1px 0 rgba(255, 248, 220, 0.45);
+      box-shadow: 0 3px 0 #6b5018, 0 5px 12px rgba(70, 48, 12, 0.38),
+        inset 0 1px 0 rgba(255, 245, 210, 0.35);
     }
     button:hover {
       filter: brightness(1.06);
     }
     button:active {
       transform: translateY(2px);
-      box-shadow: 0 1px 0 #2a4f4a, 0 2px 6px rgba(20, 50, 45, 0.3);
+      box-shadow: 0 1px 0 #6b5018, 0 2px 6px rgba(70, 48, 12, 0.35);
     }
     button.op {
-      background: linear-gradient(180deg, #5a8f88 0%, #3d6862 50%, #2f524d 100%);
+      background: linear-gradient(180deg, #c6a038 0%, #9a7318 50%, #7a5810 100%);
+      color: #241c0c;
     }
     button.wide {
       grid-column: span 2;
@@ -89,7 +90,9 @@
       grid-row: span 2;
     }
     button.clear {
-      background: linear-gradient(180deg, #5c7270 0%, #425854 100%);
+      background: linear-gradient(180deg, #9e7d3e 0%, #6d4f1e 100%);
+      color: #f5ecd4;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
     }
   </style>
 </head>
